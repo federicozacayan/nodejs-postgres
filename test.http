@@ -1,10 +1,20 @@
+###
+POST http://localhost:3000/login
+content-type: application/json
+
+{
+    "email":"abcdefgh",
+    "pass":"123456789"
+}
+
+###
 GET http://localhost:3000/user
 
 ###
-GET http://localhost:3000/user/1
+GET http://localhost:3000/user
 
 ###
-DELETE  http://localhost:3000/user/1
+DELETE  http://localhost:3000/user/5
 
 ###
 POST http://localhost:3000/user

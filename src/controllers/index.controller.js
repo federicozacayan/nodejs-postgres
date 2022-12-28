@@ -1,12 +1,25 @@
 const { Pool } = require('pg')
 
+const bcryptjs = require("bcryptjs")
+
 const pool = new Pool({
     host: 'localhost',
     port: 5432,
     user: 'user',
-    database: 'db',
+    database: 'postgres',
     password: 'pass',
 })
+
+const login = async (req, res) => {
+    const { pass, email } = req.body;
+
+    const response = await pool.query("SELECT pass FROM authentication.users where email = $1", [email])
+    const dbPass = response?.rows[0]?.pass ?? ''
+    
+    const bool = bcryptjs.compareSync(pass, dbPass)
+    res.json(bool)
+}
+
 
 const getUser = async (req, res) => {
     const response = await pool.query("SELECT * FROM authentication.users")
@@ -22,11 +35,13 @@ const getUserById = async (req, res) => {
 
 const createUser = async (req, res) => {
     const { pass, email } = req.body;
-    pool.query('INSERT INTO authentication.users (pass, email) VALUES ($1, $2)', [pass, email])
+    const passHash = await bcryptjs.hash(pass,8)
+    
+    pool.query('INSERT INTO authentication.users (pass, email) VALUES ($1, $2)', [passHash, email])
     res.json({
         message: "user added succesfully",
         body: {
-            pass,
+            passHash,
             email
         }
     })
@@ -52,5 +67,6 @@ module.exports = {
     createUser,
     getUserById,
     deleteUser,
-    updateUser
+    updateUser,
+    login
 }
