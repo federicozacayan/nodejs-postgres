@@ -10,6 +10,60 @@ const pool = new Pool({
     password: 'pass',
 })
 
+const tmp = {}
+const resetPasword  = async (req, res) =>{
+    const { newPass, code, email } = req.body;
+    if(tmp[email]?.code===code){
+        if(tmp[email].expiration > new Date().getTime()){
+
+            const response1 = await pool.query("SELECT * FROM authentication.users where email = $1", [email])
+            const bool = !!response1?.rows[0]?.pass
+            const passHash = await bcryptjs.hash(newPass,8)
+            if (bool){
+                await pool.query(
+                    `UPDATE authentication.users SET email=$1, pass=$2 WHERE id= $3`,
+                    [email, passHash, response1.rows[0].id]
+                )
+            }
+            res.statusCode = 200;
+            res.json({
+                msg:"Password updated succesfully",
+                code: passHash
+            })
+        }else{
+            res.json({
+                msg:"token expired",
+                code: newPass
+            })
+        }
+        return
+    }
+    res.json({
+        msg:"bad request",
+        code: newPass
+    })
+}
+
+const forgotPasword = async (req, res) =>{
+    const { email } = req.body;
+    const response = await pool.query("SELECT pass FROM authentication.users where email = $1", [email])
+    const bool = !!response?.rows[0]?.pass
+    let fake = 'fake'
+    if(bool){
+        tmp[email] = {
+            code:new Date().getTime(),
+            expiration: new Date().getTime()+1000*10
+        }
+        fake = tmp[email].code
+        console.log("send time to email", fake);
+    }
+    res.json({
+        msg:"send time to email",
+        code: fake
+    })
+}
+
+
 const login = async (req, res) => {
     const { pass, email } = req.body;
 
@@ -68,5 +122,7 @@ module.exports = {
     getUserById,
     deleteUser,
     updateUser,
-    login
+    login,
+    forgotPasword,
+    resetPasword
 }

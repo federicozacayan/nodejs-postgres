@@ -7,7 +7,9 @@ const {
     getUserById,
     deleteUser,
     updateUser,
-    login
+    login,
+    forgotPasword,
+    resetPasword
 } = require('../controllers/index.controller')
 
 router.get('/user', getUser)
@@ -16,6 +18,8 @@ router.post('/user', createUser)
 router.delete('/user/:id', deleteUser)
 router.put('/user/:id', updateUser)
 router.post('/login', login)
+router.post('/forgot-password', forgotPasword)
+router.post('/reset-password', resetPasword)
 
 
 

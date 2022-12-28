@@ -1,10 +1,28 @@
+
+###
+POST http://localhost:3000/reset-password
+content-type: application/json
+
+{
+    "email":"ppppppppp",
+    "newPass":"999", 
+    "code":1672267060015
+}
+###
+POST http://localhost:3000/forgot-password
+content-type: application/json
+
+{
+    "email":"ppppppppp"
+}
+
 ###
 POST http://localhost:3000/login
 content-type: application/json
 
 {
-    "email":"abcdefgh",
-    "pass":"123456789"
+    "email":"ppppppppp",
+    "pass":"999"
 }
 
 ###
@@ -26,7 +44,7 @@ content-type: application/json
 }
 
 ###
-PUT http://localhost:3000/user/2
+PUT http://localhost:3000/user/6
 content-type: application/json
 
 {
